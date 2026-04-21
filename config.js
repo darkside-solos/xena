@@ -1,0 +1,15 @@
+module.exports = {
+  OWNER_NUMBERS: ['+233530729233'],
+  BOT_NAME: 'Xena',
+  CREATOR_NAME: 'darkside',
+  CREATOR_NUMBER: '233530729233',
+  TELEGRAM_BOT_TOKEN: 'YOUR_TELEGRAM_BOT_TOKEN',
+  TELEGRAM_OWNER_ID: '8167202570',
+  REPLICATE_API_KEY: 'r8_S13yCnZ2MajvTkklYFOmzuYCZILfPR73Yxw6Y',
+  GROQ_API_KEY: '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',
+  IMAGE_MODEL: 'stability-ai/sdxl:39ed52f2319f9c43d22c827d38a4ee5e77e6e60f0d63bfde1c4e78ccfadae3c',
+  MUSIC_MODEL: 'meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eeab26',
+  VIDEO_MODEL: 'anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351',
+  ELEVENLABS_API_KEY: 'sk_29377f4966ce5cecfeadb5db4fe0d1f8c0b10f23f63683ac',
+ELEVENLABS_VOICE_ID: 'EXAVITQu4vr4xnSDxMaL', // "Bella" — most natural breathing female voice
+};
