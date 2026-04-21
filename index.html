@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xena AI — The Most Powerful WhatsApp Bot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #04020f;
+    --purple: #7c3aed;
+    --violet: #a855f7;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --gold: #f59e0b;
+    --green: #25D366;
+    --white: #f8f4ff;
+    --glass: rgba(124, 58, 237, 0.08);
+    --border: rgba(168, 85, 247, 0.2);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--white); font-family:'Outfit',sans-serif; overflow-x:hidden; cursor:none; }
+
+  .cursor { width:12px; height:12px; background:var(--violet); border-radius:50%; position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; mix-blend-mode:screen; }
+  .cursor-ring { width:36px; height:36px; border:1px solid rgba(168,85,247,.5); border-radius:50%; position:fixed; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:left .08s,top .08s; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:1; opacity:.4; }
+  #particles { position:fixed; inset:0; z-index:0; }
+
+  /* NAV */
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 8%; display:flex; align-items:center; justify-content:space-between; backdrop-filter:blur(20px); border-bottom:1px solid rgba(168,85,247,.08); background:rgba(4,2,15,.6); }
+  .nav-logo { font-family:'Cinzel Decorative',serif; font-size:1.3rem; font-weight:900; background:linear-gradient(135deg,var(--violet),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .nav-links { display:flex; gap:32px; }
+  .nav-links a { font-size:.82rem; color:rgba(255,255,255,.45); text-decoration:none; letter-spacing:1px; transition:color .2s; cursor:none; }
+  .nav-links a:hover { color:var(--violet); }
+  .nav-cta { background:linear-gradient(135deg,var(--purple),var(--pink)); color:#fff; padding:10px 24px; border-radius:100px; font-size:.82rem; font-weight:600; text-decoration:none; transition:all .3s; cursor:none; }
+  .nav-cta:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(124,58,237,.4); }
+
+  /* HERO */
+  .hero { position:relative; min-height:100vh; display:flex; align-items:center; overflow:hidden; padding-top:80px; }
+  .anime-glow { position:absolute; right:5%; bottom:0; width:45%; height:90%; background:radial-gradient(ellipse at 50% 80%,rgba(168,85,247,.25) 0%,rgba(236,72,153,.1) 40%,transparent 70%); filter:blur(40px); z-index:1; }
+  .anime-figure { position:absolute; right:0; bottom:0; width:52%; height:100%; z-index:2; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; }
+  .anime-img { height:95%; width:auto; object-fit:contain; object-position:top; filter:drop-shadow(0 0 40px rgba(168,85,247,.4)) drop-shadow(0 0 80px rgba(236,72,153,.2)); animation:float 6s ease-in-out infinite; }
+  .anime-fallback { position:absolute; bottom:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+  .anime-fallback-x { font-size:28rem; opacity:.04; font-family:'Cinzel Decorative',serif; font-weight:900; color:var(--violet); animation:float 6s ease-in-out infinite; line-height:1; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+  .hero-content { position:relative; z-index:10; padding:0 8%; max-width:55%; }
+  .hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(124,58,237,.15); border:1px solid var(--border); border-radius:100px; padding:8px 20px; font-size:.75rem; letter-spacing:3px; text-transform:uppercase; color:var(--violet); margin-bottom:32px; backdrop-filter:blur(10px); animation:fadeUp .8s ease both; }
+  .hero-badge .dot { width:6px; height:6px; background:var(--pink); border-radius:50%; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+  .hero-title { font-family:'Cinzel Decorative',serif; font-size:clamp(3.5rem,8vw,7rem); font-weight:900; line-height:.95; margin-bottom:12px; animation:fadeUp .8s ease .1s both; }
+  .hero-title .xena { background:linear-gradient(135deg,#fff 0%,var(--violet) 40%,var(--pink) 70%,var(--gold) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; display:block; filter:drop-shadow(0 0 30px rgba(168,85,247,.5)); }
+  .hero-title .ai { font-size:.35em; letter-spacing:12px; color:rgba(255,255,255,.4); display:block; margin-top:8px; -webkit-text-fill-color:rgba(255,255,255,.4); }
+  .hero-sub { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1rem,2vw,1.3rem); color:rgba(255,255,255,.55); margin-bottom:40px; line-height:1.6; animation:fadeUp .8s ease .2s both; }
+  .hero-buttons { display:flex; gap:16px; flex-wrap:wrap; animation:fadeUp .8s ease .3s both; }
+  .btn-primary { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--purple),var(--pink)); color:#fff; padding:16px 36px; border-radius:100px; font-size:.95rem; font-weight:600; text-decoration:none; box-shadow:0 0 40px rgba(124,58,237,.4); transition:all .3s; cursor:none; border:none; }
+  .btn-primary:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 0 60px rgba(124,58,237,.6); }
+  .btn-secondary { display:inline-flex; align-items:center; gap:10px; background:transparent; color:var(--white); padding:16px 36px; border-radius:100px; font-size:.95rem; font-weight:500; text-decoration:none; border:1px solid var(--border); backdrop-filter:blur(10px); transition:all .3s; cursor:none; }
+  .btn-secondary:hover { background:rgba(168,85,247,.1); border-color:var(--violet); transform:translateY(-3px); }
+  .scroll-hint { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px; color:rgba(255,255,255,.3); font-size:.7rem; letter-spacing:3px; text-transform:uppercase; animation:fadeUp 1s ease 1s both; }
+  .scroll-line { width:1px; height:60px; background:linear-gradient(to bottom,transparent,var(--violet),transparent); animation:scrollLine 2s ease-in-out infinite; }
+  @keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  /* SECTIONS */
+  section { position:relative; z-index:5; }
+  .section-label { font-size:.7rem; letter-spacing:5px; text-transform:uppercase; color:var(--violet); margin-bottom:16px; display:flex; align-items:center; gap:12px; }
+  .section-label::before { content:''; width:30px; height:1px; background:var(--violet); }
+  .section-title { font-family:'Cinzel Decorative',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.2; margin-bottom:20px; }
+  .gradient { background:linear-gradient(135deg,var(--violet),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+  /* STATS */
+  .stats { padding:80px 8%; background:linear-gradient(135deg,rgba(124,58,237,.06) 0%,rgba(236,72,153,.04) 100%); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:40px; text-align:center; }
+  .stat-number { font-family:'Cinzel Decorative',serif; font-size:clamp(2.5rem,5vw,4rem); font-weight:900; background:linear-gradient(135deg,var(--violet),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; display:block; line-height:1; margin-bottom:12px; }
+  .stat-label { font-size:.8rem; color:rgba(255,255,255,.4); letter-spacing:2px; text-transform:uppercase; }
+
+  /* FEATURES */
+  .features { padding:120px 8%; }
+  .features-header { text-align:center; margin-bottom:80px; }
+  .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .feature-card { background:var(--glass); border:1px solid var(--border); border-radius:24px; padding:36px; backdrop-filter:blur(20px); transition:all .4s cubic-bezier(.175,.885,.32,1.275); position:relative; overflow:hidden; opacity:0; transform:translateY(30px); }
+  .feature-card.visible { opacity:1; transform:translateY(0); }
+  .feature-card:hover { transform:translateY(-8px) scale(1.01); border-color:rgba(168,85,247,.5); box-shadow:0 20px 60px rgba(124,58,237,.2); }
+  .feature-card.large { grid-column:span 2; }
+  .feature-icon { width:56px; height:56px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; margin-bottom:24px; background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(236,72,153,.2)); border:1px solid rgba(168,85,247,.3); }
+  .feature-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:12px; }
+  .feature-desc { font-size:.9rem; color:rgba(255,255,255,.5); line-height:1.7; }
+  .feature-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+  .tag { font-size:.7rem; padding:4px 12px; border-radius:100px; background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.2); color:var(--violet); letter-spacing:1px; }
+
+  /* COMMANDS */
+  .commands { padding:120px 8%; }
+  .commands-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:64px; }
+  .cmd-group { background:var(--glass); border:1px solid var(--border); border-radius:20px; padding:28px; backdrop-filter:blur(20px); opacity:0; transform:translateY(20px); transition:all .5s ease; }
+  .cmd-group.visible { opacity:1; transform:translateY(0); }
+  .cmd-group-title { font-size:.7rem; letter-spacing:4px; text-transform:uppercase; color:var(--violet); margin-bottom:20px; }
+  .cmd-item { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+  .cmd-item:last-child { border-bottom:none; }
+  .cmd-name { font-family:'Courier New',monospace; font-size:.82rem; color:var(--cyan); background:rgba(6,182,212,.08); padding:3px 10px; border-radius:6px; white-space:nowrap; flex-shrink:0; }
+  .cmd-desc { font-size:.82rem; color:rgba(255,255,255,.45); line-height:1.5; }
+
+  /* ═══════════════════════════════════════════════
+     DEPLOY SECTION
+  ═══════════════════════════════════════════════ */
+  .deploy { padding:120px 8%; }
+  .deploy-header { text-align:center; margin-bottom:80px; }
+  .deploy-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; max-width:1100px; margin:0 auto; }
+
+  /* WHATSAPP PAIRING CARD */
+  .pair-card { background:linear-gradient(135deg,rgba(37,211,102,.06),rgba(37,211,102,.02)); border:1px solid rgba(37,211,102,.2); border-radius:32px; padding:48px; backdrop-filter:blur(20px); position:relative; overflow:hidden; opacity:0; transform:translateY(30px); transition:all .6s ease; }
+  .pair-card.visible { opacity:1; transform:translateY(0); }
+  .pair-card::before { content:''; position:absolute; top:-1px; left:-1px; right:-1px; height:2px; background:linear-gradient(90deg,transparent,#25D366,transparent); }
+  .pair-card-icon { width:64px; height:64px; background:#25D366; border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:24px; box-shadow:0 0 30px rgba(37,211,102,.3); }
+  .pair-card-title { font-family:'Cinzel Decorative',serif; font-size:1.5rem; font-weight:700; margin-bottom:10px; }
+  .pair-card-sub { font-size:.87rem; color:rgba(255,255,255,.45); line-height:1.6; margin-bottom:32px; }
+
+  .deploy-input { width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:16px 20px; color:var(--white); font-family:'Outfit',sans-serif; font-size:.95rem; outline:none; transition:all .3s; margin-bottom:16px; }
+  .deploy-input:focus { border-color:rgba(37,211,102,.5); box-shadow:0 0 0 3px rgba(37,211,102,.08); background:rgba(37,211,102,.04); }
+  .deploy-input::placeholder { color:rgba(255,255,255,.25); }
+  .deploy-input.wa:focus { border-color:rgba(37,211,102,.5); box-shadow:0 0 0 3px rgba(37,211,102,.08); }
+
+  .btn-wa { width:100%; background:linear-gradient(135deg,#25D366,#128C7E); color:#fff; padding:16px; border-radius:14px; font-size:1rem; font-weight:700; border:none; cursor:none; transition:all .3s; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .btn-wa:hover { transform:translateY(-2px); box-shadow:0 0 40px rgba(37,211,102,.4); }
+  .btn-wa:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  /* Pairing code display */
+  .pair-code-box { display:none; margin-top:24px; background:rgba(37,211,102,.06); border:1px solid rgba(37,211,102,.2); border-radius:20px; padding:28px; text-align:center; }
+  .pair-code-box.show { display:block; animation:fadeUp .5s ease; }
+  .pair-code { font-family:'Cinzel Decorative',serif; font-size:2.8rem; font-weight:900; color:#25D366; letter-spacing:8px; text-shadow:0 0 30px rgba(37,211,102,.4); margin:16px 0; }
+  .pair-steps { text-align:left; margin-top:20px; }
+  .pair-step { display:flex; align-items:flex-start; gap:12px; padding:8px 0; font-size:.85rem; color:rgba(255,255,255,.6); }
+  .pair-step-num { width:24px; height:24px; border-radius:50%; background:rgba(37,211,102,.2); border:1px solid rgba(37,211,102,.3); display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:#25D366; flex-shrink:0; }
+  .pair-timer { font-size:.75rem; color:rgba(255,255,255,.3); margin-top:16px; text-align:center; }
+  .pair-timer span { color:var(--pink); font-weight:700; }
+  .pair-status { font-size:.82rem; margin-top:12px; padding:10px 16px; border-radius:10px; display:none; }
+  .pair-status.error { display:block; background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.2); color:#f87171; }
+  .pair-status.success { display:block; background:rgba(37,211,102,.08); border:1px solid rgba(37,211,102,.2); color:#4ade80; }
+  .pair-status.loading { display:block; background:rgba(168,85,247,.08); border:1px solid var(--border); color:var(--violet); }
+
+  /* TELEGRAM DEPLOY CARD */
+  .tg-card { background:linear-gradient(135deg,rgba(0,136,204,.06),rgba(0,136,204,.02)); border:1px solid rgba(0,136,204,.2); border-radius:32px; padding:48px; backdrop-filter:blur(20px); position:relative; overflow:hidden; opacity:0; transform:translateY(30px); transition:all .6s ease .1s; }
+  .tg-card.visible { opacity:1; transform:translateY(0); }
+  .tg-card::before { content:''; position:absolute; top:-1px; left:-1px; right:-1px; height:2px; background:linear-gradient(90deg,transparent,#0088cc,transparent); }
+  .tg-card-icon { width:64px; height:64px; background:linear-gradient(135deg,#0088cc,#0099dd); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:24px; box-shadow:0 0 30px rgba(0,136,204,.3); }
+  .tg-card-title { font-family:'Cinzel Decorative',serif; font-size:1.5rem; font-weight:700; margin-bottom:10px; }
+  .tg-card-sub { font-size:.87rem; color:rgba(255,255,255,.45); line-height:1.6; margin-bottom:32px; }
+  .tg-input:focus { border-color:rgba(0,136,204,.5); box-shadow:0 0 0 3px rgba(0,136,204,.08); background:rgba(0,136,204,.04); }
+  .input-label { font-size:.72rem; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:8px; display:block; }
+  .input-hint { font-size:.75rem; color:rgba(255,255,255,.25); margin-top:-10px; margin-bottom:16px; }
+  .input-hint a { color:rgba(0,136,204,.8); text-decoration:none; cursor:none; }
+
+  .btn-tg { width:100%; background:linear-gradient(135deg,#0088cc,#0066aa); color:#fff; padding:16px; border-radius:14px; font-size:1rem; font-weight:700; border:none; cursor:none; transition:all .3s; display:flex; align-items:center; justify-content:center; gap:10px; position:relative; overflow:hidden; margin-top:8px; }
+  .btn-tg::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent); transform:translateX(-100%); transition:transform .6s; }
+  .btn-tg:hover::after { transform:translateX(100%); }
+  .btn-tg:hover { transform:translateY(-2px); box-shadow:0 0 40px rgba(0,136,204,.4); }
+  .btn-tg:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  .tg-status { font-size:.82rem; margin-top:16px; padding:16px 20px; border-radius:14px; display:none; line-height:1.6; }
+  .tg-status.loading { display:block; background:rgba(0,136,204,.08); border:1px solid rgba(0,136,204,.2); color:#60cdff; }
+  .tg-status.success { display:block; background:rgba(37,211,102,.08); border:1px solid rgba(37,211,102,.2); color:#4ade80; }
+  .tg-status.error { display:block; background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.2); color:#f87171; }
+
+  .deploy-steps { margin-top:20px; }
+  .deploy-step-item { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+  .deploy-step-item:last-child { border-bottom:none; }
+  .step-icon { width:32px; height:32px; border-radius:50%; background:rgba(0,136,204,.15); border:1px solid rgba(0,136,204,.3); display:flex; align-items:center; justify-content:center; font-size:.8rem; flex-shrink:0; }
+  .step-text { font-size:.82rem; color:rgba(255,255,255,.45); line-height:1.5; padding-top:4px; }
+  .step-text strong { color:rgba(255,255,255,.7); }
+
+  /* Creator protected badge */
+  .creator-locked { display:flex; align-items:center; gap:8px; background:rgba(245,158,11,.06); border:1px solid rgba(245,158,11,.2); border-radius:10px; padding:10px 16px; font-size:.78rem; color:var(--gold); margin-top:12px; }
+  .creator-locked svg { flex-shrink:0; }
+
+  /* ABOUT */
+  .about { padding:120px 8%; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+  .about-card { background:var(--glass); border:1px solid var(--border); border-radius:32px; padding:48px; backdrop-filter:blur(20px); position:relative; overflow:hidden; opacity:0; transform:translateX(-30px); transition:all .6s ease; }
+  .about-card.visible { opacity:1; transform:translateX(0); }
+  .about-card::before { content:'X'; position:absolute; font-family:'Cinzel Decorative',serif; font-size:20rem; font-weight:900; color:rgba(124,58,237,.04); top:-60px; right:-40px; line-height:1; pointer-events:none; }
+  .about-avatar { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,var(--purple),var(--pink)); display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:24px; box-shadow:0 0 30px rgba(124,58,237,.4); }
+  .about-name { font-family:'Cinzel Decorative',serif; font-size:1.8rem; font-weight:700; margin-bottom:8px; }
+  .about-role { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:var(--violet); margin-bottom:24px; }
+  .about-bio { font-size:.95rem; color:rgba(255,255,255,.55); line-height:1.8; }
+  .personality-traits { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+  .trait { padding:8px 18px; border-radius:100px; font-size:.8rem; font-weight:500; border:1px solid; }
+  .trait.purple { color:var(--violet); border-color:rgba(168,85,247,.3); background:rgba(168,85,247,.08); }
+  .trait.pink { color:var(--pink); border-color:rgba(236,72,153,.3); background:rgba(236,72,153,.08); }
+  .trait.cyan { color:var(--cyan); border-color:rgba(6,182,212,.3); background:rgba(6,182,212,.08); }
+  .trait.gold { color:var(--gold); border-color:rgba(245,158,11,.3); background:rgba(245,158,11,.08); }
+
+  /* CREATOR */
+  .creator { padding:120px 8%; text-align:center; }
+  .creator-card { max-width:600px; margin:0 auto; background:var(--glass); border:1px solid var(--border); border-radius:32px; padding:60px; backdrop-filter:blur(20px); position:relative; overflow:hidden; opacity:0; transform:translateY(30px); transition:all .6s ease; }
+  .creator-card.visible { opacity:1; transform:translateY(0); }
+  .creator-card::after { content:''; position:absolute; top:-1px; left:-1px; right:-1px; height:2px; background:linear-gradient(90deg,transparent,var(--violet),var(--pink),var(--violet),transparent); }
+  .creator-avatar { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,var(--purple),var(--pink),var(--gold)); display:flex; align-items:center; justify-content:center; font-family:'Cinzel Decorative',serif; font-size:2.5rem; font-weight:900; margin:0 auto 28px; box-shadow:0 0 40px rgba(124,58,237,.5),0 0 80px rgba(236,72,153,.2); }
+  .creator-name { font-family:'Cinzel Decorative',serif; font-size:2.2rem; font-weight:900; background:linear-gradient(135deg,var(--gold),var(--violet),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:8px; }
+  .creator-title { font-size:.75rem; letter-spacing:5px; text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:28px; }
+  .creator-bio { font-size:.95rem; color:rgba(255,255,255,.5); line-height:1.8; margin-bottom:36px; }
+  .creator-badge { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(124,58,237,.1)); border:1px solid rgba(245,158,11,.2); border-radius:100px; padding:10px 24px; font-size:.8rem; color:var(--gold); letter-spacing:2px; text-transform:uppercase; }
+
+  /* SUPPORT */
+  .support { padding:80px 8%; text-align:center; }
+  .support-card { max-width:700px; margin:0 auto; background:linear-gradient(135deg,rgba(37,211,102,.08),rgba(37,211,102,.04)); border:1px solid rgba(37,211,102,.2); border-radius:28px; padding:56px; backdrop-filter:blur(20px); position:relative; overflow:hidden; }
+  .whatsapp-icon { width:72px; height:72px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 28px; font-size:2rem; box-shadow:0 0 40px rgba(37,211,102,.4); animation:float 4s ease-in-out infinite; }
+  .btn-whatsapp { display:inline-flex; align-items:center; gap:12px; background:#25D366; color:#fff; padding:18px 40px; border-radius:100px; font-size:1rem; font-weight:700; text-decoration:none; transition:all .3s; box-shadow:0 0 40px rgba(37,211,102,.3); cursor:none; }
+  .btn-whatsapp:hover { transform:translateY(-4px) scale(1.03); box-shadow:0 0 60px rgba(37,211,102,.5); }
+
+  /* FOOTER */
+  footer { padding:60px 8%; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px; }
+  .footer-logo { font-family:'Cinzel Decorative',serif; font-size:1.5rem; font-weight:900; background:linear-gradient(135deg,var(--violet),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .footer-copy { font-size:.82rem; color:rgba(255,255,255,.3); text-align:center; }
+  .footer-copy span { color:var(--gold); }
+  .footer-links { display:flex; gap:24px; }
+  .footer-links a { font-size:.82rem; color:rgba(255,255,255,.3); text-decoration:none; transition:color .2s; cursor:none; }
+  .footer-links a:hover { color:var(--violet); }
+
+  /* SPINNER */
+  .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,.2); border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  @media(max-width:968px) {
+    .hero-content{max-width:100%;padding:100px 6% 200px}
+    .anime-figure{width:100%;height:50%;bottom:0;right:0;opacity:.25}
+    .features-grid,.commands-grid,.deploy-grid,.about{grid-template-columns:1fr}
+    .feature-card.large{grid-column:span 1}
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    footer{flex-direction:column;text-align:center}
+    .footer-links{justify-content:center}
+    nav .nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Xena AI</div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#deploy">Deploy</a>
+    <a href="#commands">Commands</a>
+    <a href="#creator">Creator</a>
+  </div>
+  <a href="#deploy" class="nav-cta">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="anime-glow"></div>
+  <div class="anime-figure">
+    <img class="anime-img"
+      src="https://i.pinimg.com/736x/your-anime-image.jpg"
+      alt="Xena"
+      onerror="this.style.display='none'">
+    <div class="anime-fallback">
+      <div class="anime-fallback-x">X</div>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span>Now Active on WhatsApp & Telegram</div>
+    <h1 class="hero-title">
+      <span class="xena">Xena</span>
+      <span class="ai">Artificial Intelligence</span>
+    </h1>
+    <p class="hero-sub">The most powerful, most intelligent, and most capable AI bot ever created. She thinks. She creates. She remembers.</p>
+    <div class="hero-buttons">
+      <a href="#deploy" class="btn-primary">🚀 Deploy Xena</a>
+      <a href="#features" class="btn-secondary">✦ Explore</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-grid">
+    <div><span class="stat-number" data-count="47">47+</span><span class="stat-label">Commands</span></div>
+    <div><span class="stat-number">∞</span><span class="stat-label">Memory</span></div>
+    <div><span class="stat-number">24/7</span><span class="stat-label">Always Online</span></div>
+    <div><span class="stat-number">2</span><span class="stat-label">Platforms</span></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-header">
+    <div class="section-label" style="justify-content:center;">Capabilities</div>
+    <h2 class="section-title">Everything You Need,<br><span class="gradient">Nothing You Don't</span></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card large" data-animate>
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">Advanced AI Intelligence</div>
+      <div class="feature-desc">Powered by Llama 3 70B — Xena understands context, reads quoted messages, remembers your name, and converses like a real person. She doesn't just answer questions, she understands them.</div>
+      <div class="feature-tags"><span class="tag">Natural Language</span><span class="tag">Context Aware</span><span class="tag">Memory System</span><span class="tag">Llama 3 70B</span></div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">🎨</div>
+      <div class="feature-title">AI Image Generation</div>
+      <div class="feature-desc">Generate stunning HD images from text. Powered by SDXL for breathtaking quality.</div>
+      <div class="feature-tags"><span class="tag">SDXL</span><span class="tag">HD Quality</span></div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">🎵</div>
+      <div class="feature-title">Music & Video Generation</div>
+      <div class="feature-desc">Generate original music from a description or create short AI videos on demand.</div>
+      <div class="feature-tags"><span class="tag">MusicGen</span><span class="tag">Video AI</span></div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">🎙️</div>
+      <div class="feature-title">Female Voice Messages</div>
+      <div class="feature-desc">Xena speaks with a natural, breathing female AI voice. Just say "voice [text]".</div>
+      <div class="feature-tags"><span class="tag">ElevenLabs</span><span class="tag">Natural Breathing</span></div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">👁️</div>
+      <div class="feature-title">ViewOnce Reveal</div>
+      <div class="feature-desc">Silently saves all view-once messages in memory. Ask her to reveal them anytime.</div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">⬇️</div>
+      <div class="feature-title">Universal Downloader</div>
+      <div class="feature-desc">Send any TikTok, YouTube, Instagram, Twitter or Facebook link and Xena downloads it.</div>
+      <div class="feature-tags"><span class="tag">TikTok</span><span class="tag">YouTube</span><span class="tag">Instagram</span></div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">🗑️</div>
+      <div class="feature-title">Anti-Delete</div>
+      <div class="feature-desc">Nothing gets deleted around Xena. She keeps deleted messages and reveals them when asked.</div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">🦊</div>
+      <div class="feature-title">Anime Character</div>
+      <div class="feature-desc">Ask Xena for her pic and she generates a unique anime version of herself every time.</div>
+    </div>
+    <div class="feature-card" data-animate>
+      <div class="feature-icon">💅</div>
+      <div class="feature-title">Mood System</div>
+      <div class="feature-desc">Her personality shifts throughout the day — chill in the morning, sassy in the evening, mysterious at night.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     DEPLOY SECTION
+═══════════════════════════════════════════ -->
+<section class="deploy" id="deploy">
+  <div class="deploy-header">
+    <div class="section-label" style="justify-content:center;">Setup & Deploy</div>
+    <h2 class="section-title" style="text-align:center;">Connect Xena to<br><span class="gradient">Your Accounts</span></h2>
+    <p style="text-align:center;color:rgba(255,255,255,.4);font-size:.9rem;max-width:500px;margin:0 auto;">
+      Link Xena to WhatsApp and deploy her to Telegram in minutes. No technical knowledge required.
+    </p>
+  </div>
+
+  <div class="deploy-grid">
+
+    <!-- WHATSAPP PAIRING -->
+    <div class="pair-card" data-animate>
+      <div class="pair-card-icon">💬</div>
+      <div class="pair-card-title">WhatsApp Pairing</div>
+      <div class="pair-card-sub">Enter your WhatsApp number to get a pairing code. Open WhatsApp → Linked Devices → Link with phone number.</div>
+
+      <!-- Server URL input (hidden by default, shown as config) -->
+      <label class="input-label">Bot Server URL</label>
+      <input class="deploy-input wa" id="serverUrl" type="url" placeholder="https://your-panel-url.com" />
+      <div class="input-hint">Your Xena bot panel URL (where npm start is running)</div>
+
+      <label class="input-label">Your WhatsApp Number</label>
+      <input class="deploy-input wa" id="waNumber" type="tel" placeholder="233XXXXXXXXX (no + sign)" maxlength="15" />
+
+      <button class="btn-wa" id="pairBtn" onclick="requestPairCode()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Get Pairing Code
+      </button>
+
+      <div class="pair-status" id="pairStatus"></div>
+
+      <div class="pair-code-box" id="pairCodeBox">
+        <div style="font-size:.75rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);">Your Pairing Code</div>
+        <div class="pair-code" id="pairCodeDisplay">----</div>
+        <div class="pair-steps">
+          <div class="pair-step"><div class="pair-step-num">1</div>Open WhatsApp on your phone</div>
+          <div class="pair-step"><div class="pair-step-num">2</div>Tap ⋮ Menu → Linked Devices</div>
+          <div class="pair-step"><div class="pair-step-num">3</div>Tap "Link with phone number"</div>
+          <div class="pair-step"><div class="pair-step-num">4</div>Enter the code above</div>
+        </div>
+        <div class="pair-timer">Expires in <span id="countdown">60</span> seconds</div>
+      </div>
+
+      <div class="creator-locked" style="margin-top:20px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1C8.676 1 6 3.676 6 7v1H4v15h16V8h-2V7c0-3.324-2.676-6-6-6zm0 2c2.276 0 4 1.724 4 4v1H8V7c0-2.276 1.724-4 4-4zm0 9a2 2 0 110 4 2 2 0 010-4z"/></svg>
+        Creator protected: Darkside (233530729233)
+      </div>
+    </div>
+
+    <!-- TELEGRAM DEPLOY -->
+    <div class="tg-card" data-animate>
+      <div class="tg-card-icon">✈️</div>
+      <div class="tg-card-title">Telegram Deploy</div>
+      <div class="tg-card-sub">Deploy Xena to Telegram in one click. Get your bot token from @BotFather and your user ID from @userinfobot.</div>
+
+      <label class="input-label">Telegram Bot Token</label>
+      <input class="deploy-input tg-input" id="tgToken" type="text" placeholder="1234567890:ABC-DEF..." />
+      <div class="input-hint">Get from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> → /newbot</div>
+
+      <label class="input-label">Your Telegram User ID</label>
+      <input class="deploy-input tg-input" id="tgOwnerId" type="text" placeholder="Your Telegram ID" />
+      <div class="input-hint">Get from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram</div>
+
+      <label class="input-label">Bot Server URL</label>
+      <input class="deploy-input tg-input" id="tgServerUrl" type="url" placeholder="https://your-panel-url.com" />
+      <div class="input-hint">Same as your Xena bot panel URL</div>
+
+      <button class="btn-tg" id="deployBtn" onclick="deployTelegram()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.83.941z"/></svg>
+        🚀 Deploy Xena to Telegram
+      </button>
+
+      <div class="tg-status" id="tgStatus"></div>
+
+      <div class="creator-locked">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1C8.676 1 6 3.676 6 7v1H4v15h16V8h-2V7c0-3.324-2.676-6-6-6zm0 2c2.276 0 4 1.724 4 4v1H8V7c0-2.276 1.724-4 4-4zm0 9a2 2 0 110 4 2 2 0 010-4z"/></svg>
+        Creator always protected — Darkside stays as master owner
+      </div>
+
+      <div class="deploy-steps" style="margin-top:24px;">
+        <div style="font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:16px;">What happens on deploy</div>
+        <div class="deploy-step-item">
+          <div class="step-icon">1</div>
+          <div class="step-text"><strong>Bot token saved</strong> — Xena connects to your Telegram bot</div>
+        </div>
+        <div class="deploy-step-item">
+          <div class="step-icon">2</div>
+          <div class="step-text"><strong>Owner ID saved</strong> — you get full control via /pair, /status, /logs</div>
+        </div>
+        <div class="deploy-step-item">
+          <div class="step-icon">3</div>
+          <div class="step-text"><strong>Creator locked in</strong> — Darkside's ID is permanently protected and cannot be overridden</div>
+        </div>
+        <div class="deploy-step-item">
+          <div class="step-icon">4</div>
+          <div class="step-text"><strong>Bot restarts</strong> — Xena comes online with your new config</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMMANDS -->
+<section class="commands" id="commands">
+  <div class="section-label">Commands</div>
+  <h2 class="section-title">What Can<br><span class="gradient">Xena Do?</span></h2>
+  <div class="commands-grid">
+    <div class="cmd-group" data-animate>
+      <div class="cmd-group-title">🎨 Media Generation</div>
+      <div class="cmd-item"><span class="cmd-name">generate image</span><span class="cmd-desc">Generate any image from text</span></div>
+      <div class="cmd-item"><span class="cmd-name">generate music</span><span class="cmd-desc">Create original music</span></div>
+      <div class="cmd-item"><span class="cmd-name">generate video</span><span class="cmd-desc">Create a short AI video</span></div>
+      <div class="cmd-item"><span class="cmd-name">voice [text]</span><span class="cmd-desc">Send female voice message</span></div>
+      <div class="cmd-item"><span class="cmd-name">sticker</span><span class="cmd-desc">Convert image to sticker</span></div>
+      <div class="cmd-item"><span class="cmd-name">xena pic</span><span class="cmd-desc">Generate Xena's anime pic</span></div>
+    </div>
+    <div class="cmd-group" data-animate>
+      <div class="cmd-group-title">🌐 Search & Info</div>
+      <div class="cmd-item"><span class="cmd-name">wiki [topic]</span><span class="cmd-desc">Search Wikipedia</span></div>
+      <div class="cmd-item"><span class="cmd-name">weather [city]</span><span class="cmd-desc">Get weather info</span></div>
+      <div class="cmd-item"><span class="cmd-name">define [word]</span><span class="cmd-desc">Dictionary lookup</span></div>
+      <div class="cmd-item"><span class="cmd-name">translate [lang]</span><span class="cmd-desc">Translate any text</span></div>
+      <div class="cmd-item"><span class="cmd-name">convert [amount]</span><span class="cmd-desc">Currency converter</span></div>
+      <div class="cmd-item"><span class="cmd-name">news</span><span class="cmd-desc">Latest headlines</span></div>
+    </div>
+    <div class="cmd-group" data-animate>
+      <div class="cmd-group-title">😂 Fun & Entertainment</div>
+      <div class="cmd-item"><span class="cmd-name">roast [name]</span><span class="cmd-desc">Savage funny roast</span></div>
+      <div class="cmd-item"><span class="cmd-name">joke</span><span class="cmd-desc">Tell a funny joke</span></div>
+      <div class="cmd-item"><span class="cmd-name">rizz [name]</span><span class="cmd-desc">Smooth pickup line</span></div>
+      <div class="cmd-item"><span class="cmd-name">ship [n1] and [n2]</span><span class="cmd-desc">Compatibility %</span></div>
+      <div class="cmd-item"><span class="cmd-name">horoscope [sign]</span><span class="cmd-desc">Daily horoscope</span></div>
+      <div class="cmd-item"><span class="cmd-name">poem [topic]</span><span class="cmd-desc">Write a poem</span></div>
+    </div>
+    <div class="cmd-group" data-animate>
+      <div class="cmd-group-title">🔧 Utility & AI</div>
+      <div class="cmd-item"><span class="cmd-name">calc [expr]</span><span class="cmd-desc">Calculator</span></div>
+      <div class="cmd-item"><span class="cmd-name">qr [text]</span><span class="cmd-desc">Generate QR code</span></div>
+      <div class="cmd-item"><span class="cmd-name">summarize [text]</span><span class="cmd-desc">Summarize anything</span></div>
+      <div class="cmd-item"><span class="cmd-name">fix [text]</span><span class="cmd-desc">Fix grammar</span></div>
+      <div class="cmd-item"><span class="cmd-name">story [topic]</span><span class="cmd-desc">Generate a story</span></div>
+      <div class="cmd-item"><span class="cmd-name">antidelete</span><span class="cmd-desc">Show deleted messages</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about">
+  <div data-animate>
+    <div class="about-card">
+      <div class="about-avatar">🦊</div>
+      <div class="about-name">Xena</div>
+      <div class="about-role">WhatsApp & Telegram AI</div>
+      <div class="about-bio">I'm Xena — a confident, intelligent, and slightly sassy AI assistant. I generate images, music, and videos. I remember your name and birthday. I reveal what others try to hide. And I always have something to say.</div>
+      <div class="personality-traits">
+        <span class="trait purple">Intelligent</span>
+        <span class="trait pink">Sassy</span>
+        <span class="trait cyan">Creative</span>
+        <span class="trait gold">Loyal</span>
+        <span class="trait purple">Confident</span>
+        <span class="trait pink">Mysterious</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="section-label">About Xena</div>
+    <h2 class="section-title">Not Just a Bot.<br><span class="gradient">A Whole Vibe.</span></h2>
+    <p style="color:rgba(255,255,255,.5);line-height:1.8;margin-bottom:32px;font-size:.95rem;">
+      Xena isn't your average bot. She has a personality that evolves through the day, a memory that never forgets, and capabilities that go far beyond simple commands. She knows her owner, protects her loyalty, and responds to natural language.
+    </p>
+    <p style="color:rgba(255,255,255,.5);line-height:1.8;font-size:.95rem;">
+      In groups, she watches quietly until someone calls her name or tags her. In DMs, she's always there. Available on both WhatsApp and Telegram.
+    </p>
+  </div>
+</section>
+
+<!-- CREATOR -->
+<section class="creator" id="creator">
+  <div class="section-label" style="justify-content:center;">The Mind Behind It</div>
+  <h2 class="section-title" style="text-align:center;margin-bottom:60px;">Built With <span class="gradient">Passion & Code</span></h2>
+  <div class="creator-card" data-animate>
+    <div class="creator-avatar">D</div>
+    <div class="creator-name">Darkside</div>
+    <div class="creator-title">Creator & Developer of Xena AI</div>
+    <div class="creator-bio">The visionary developer behind Xena AI. Built from scratch with a passion for pushing the limits of what a bot can do. Every feature, every command, every line of code — crafted with precision and purpose.</div>
+    <div class="creator-badge">✦ Original Creator of Xena AI</div>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<section class="support" id="support">
+  <div class="support-card" data-animate>
+    <div class="whatsapp-icon">💬</div>
+    <h2 style="font-family:'Cinzel Decorative',serif;font-size:1.8rem;font-weight:700;margin-bottom:16px;">Need Help?</h2>
+    <p style="font-size:.95rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:36px;">Having issues with Xena? Reach out directly to the creator on WhatsApp. Fast response, always.</p>
+    <a href="https://wa.me/233530729233?text=Hi%20Darkside%2C%20I%20need%20help%20with%20Xena%20AI" class="btn-whatsapp" target="_blank">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Chat with Darkside
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Xena AI</div>
+  <div class="footer-copy">© 2025 Xena AI — Crafted with 💜 by <span>Darkside</span><br><small style="color:rgba(255,255,255,.2);font-size:.7rem;">The most powerful WhatsApp & Telegram AI bot ever built</small></div>
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="#deploy">Deploy</a>
+    <a href="#creator">Creator</a>
+    <a href="https://wa.me/233530729233" target="_blank">Support</a>
+  </div>
+</footer>
+
+<script>
+// ── PROTECTED CREATOR INFO ───────────────────────────────────────────
+const CREATOR = {
+  waNumber: '233530729233',
+  tgId: '8167202570',
+  name: 'Darkside'
+};
+
+// ── SECRET — must match server.js ────────────────────────────────────
+const SECRET = 'xenaXdark';
+
+// ── Auto-fill server URL from current domain ─────────────────────────
+// Since the site IS the bot server, use current origin
+const AUTO_SERVER_URL = window.location.origin;
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('serverUrl').value = AUTO_SERVER_URL;
+  document.getElementById('tgServerUrl').value = AUTO_SERVER_URL;
+});
+
+// ── Custom Cursor ─────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  cursorRing.style.left = e.clientX + 'px';
+  cursorRing.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a,button,input').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width='20px'; cursor.style.height='20px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; });
+});
+
+// ── Particles ─────────────────────────────────────────────────────────
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+const particles = Array.from({length:120}, () => ({
+  x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+  size: Math.random()*1.5+.3, speedX:(Math.random()-.5)*.3, speedY:(Math.random()-.5)*.3,
+  opacity:Math.random()*.4+.1, hue:Math.random()>.5?'168,85,247':'236,72,153'
+}));
+function animateP() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i) => {
+    p.x+=p.speedX; p.y+=p.speedY;
+    if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${p.hue},${p.opacity})`; ctx.fill();
+    particles.slice(i+1).forEach(p2=>{
+      const d=Math.hypot(p.x-p2.x,p.y-p2.y);
+      if(d<80){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle=`rgba(168,85,247,${.06*(1-d/80)})`;ctx.lineWidth=.5;ctx.stroke();}
+    });
+  });
+  requestAnimationFrame(animateP);
+}
+animateP();
+
+// ── Scroll Animations ─────────────────────────────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => { if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); });
+},{threshold:.1});
+document.querySelectorAll('[data-animate]').forEach(el=>obs.observe(el));
+
+// ── Smooth scroll ─────────────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+// ══════════════════════════════════════════════════════════
+// WHATSAPP PAIRING — fixed: sends secret
+// ══════════════════════════════════════════════════════════
+let countdownTimer = null;
+
+async function requestPairCode() {
+  const serverUrl = (document.getElementById('serverUrl').value.trim() || AUTO_SERVER_URL).replace(/\/$/, '');
+  const number = document.getElementById('waNumber').value.trim().replace(/\D/g, '');
+  const btn = document.getElementById('pairBtn');
+  const codeBox = document.getElementById('pairCodeBox');
+
+  if (!number || number.length < 10) {
+    showStatus('pairStatus', 'error', '❌ Please enter a valid WhatsApp number.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Getting code...';
+  showStatus('pairStatus', 'loading', '⏳ Connecting to Xena server...');
+  codeBox.classList.remove('show');
+
+  try {
+    const res = await fetch(`${serverUrl}/pair`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phone: number,
+        secret: SECRET  // ✅ fixed — was missing before
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      showStatus('pairStatus', 'success', '✅ Pairing started! Check your Telegram bot for the code.');
+      // Show instructions since code comes via Telegram
+      codeBox.classList.add('show');
+      document.getElementById('pairCodeDisplay').textContent = '📲';
+      document.querySelector('.pair-code-box .pair-timer').innerHTML =
+        'Check your <strong style="color:#0088cc">Telegram bot</strong> for the pairing code';
+      startCountdown(60);
+    } else {
+      throw new Error(data.error || 'Failed to start pairing');
+    }
+  } catch (e) {
+    showStatus('pairStatus', 'error',
+      `❌ Error: ${e.message}\n\nMake sure:\n• Server URL is correct\n• Bot is deployed on Render\n• Try /pair in your Telegram bot instead`
+    );
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Get Pairing Code`;
+}
+
+function startCountdown(seconds) {
+  if (countdownTimer) clearInterval(countdownTimer);
+  const el = document.getElementById('countdown');
+  let s = seconds;
+  if (el) el.textContent = s;
+  countdownTimer = setInterval(() => {
+    s--;
+    if (el) el.textContent = s;
+    if (s <= 0) clearInterval(countdownTimer);
+  }, 1000);
+}
+
+// ══════════════════════════════════════════════════════════
+// TELEGRAM DEPLOY — fixed: sends secret
+// ══════════════════════════════════════════════════════════
+async function deployTelegram() {
+  const token = document.getElementById('tgToken').value.trim();
+  const ownerId = document.getElementById('tgOwnerId').value.trim();
+  const serverUrl = (document.getElementById('tgServerUrl').value.trim() || AUTO_SERVER_URL).replace(/\/$/, '');
+  const btn = document.getElementById('deployBtn');
+
+  if (!token || !token.includes(':')) {
+    showStatus('tgStatus', 'error', '❌ Please enter a valid Telegram bot token (format: 123456:ABC-DEF...)');
+    return;
+  }
+  if (!ownerId || isNaN(ownerId)) {
+    showStatus('tgStatus', 'error', '❌ Please enter your Telegram user ID (numbers only). Get it from @userinfobot');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Deploying...';
+  showStatus('tgStatus', 'loading', '⚙️ Deploying Xena to Telegram...');
+
+  try {
+    const res = await fetch(`${serverUrl}/deploy-telegram`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        telegramToken: token,
+        ownerId: ownerId,
+        secret: SECRET  // ✅ fixed — was missing before
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      showStatus('tgStatus', 'success',
+        `✅ Xena deployed successfully!\n\n` +
+        `🤖 Your Telegram bot is now live\n` +
+        `👑 Owner ID: ${ownerId}\n` +
+        `🔐 Creator (Darkside) permanently protected\n\n` +
+        `Open your Telegram bot and send /start`
+      );
+    } else {
+      throw new Error(data.error || 'Deployment failed');
+    }
+  } catch (e) {
+    showStatus('tgStatus', 'error',
+      `❌ Deploy failed: ${e.message}\n\nCheck that the server URL is correct and Render is running.`
+    );
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.83.941z"/></svg> 🚀 Deploy Xena to Telegram`;
+}
+
+// ── Status helper ─────────────────────────────────────────────────────
+function showStatus(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = `${id.includes('tg') ? 'tg-status' : 'pair-status'} ${type}`;
+  el.style.whiteSpace = 'pre-line';
+  el.textContent = msg;
+}
