@@ -34,7 +34,7 @@ startXena();
 // ── Start Telegram bot if token exists ───────────────────────────────
 const { startTelegramBot } = require('./features/telegram-bot');
 if (mergedConfig.TELEGRAM_BOT_TOKEN &&
-    mergedConfig.TELEGRAM_BOT_TOKEN !== '8674929427:AAEZeBmIHvLIvkmZJgVJ3eeVhZg89bQDJ9c') {
+    mergedConfig.TELEGRAM_BOT_TOKEN !== 'YOUR_TELEGRAM_BOT_TOKEN') {
   startTelegramBot(mergedConfig);
   console.log('📲 Telegram bot started');
 } else {
