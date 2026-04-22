@@ -15,7 +15,7 @@ const NodeCache = require('node-cache');
 
 const { chat, describeImage } = require('./features/chatbot');
 const { handleCommand } = require('./features/commands');
-const { handleGame } = require('./features/games');
+const { handleGame, detectTrigger } = require('./features/games');
 const { saveDeleted, getDeleted } = require('./features/antidelete');
 const { addInteraction, getName, checkBirthdays } = require('./features/personality');
 const { imageToSticker } = require('./features/sticker');
