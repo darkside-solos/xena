@@ -1,4 +1,6 @@
 'use strict';
+const { handleCommand } = require('./features/commands');
+const { handleGame, detectTrigger } = require('./features/games');
 const config = require('./config');
 const fs = require('fs');
 
