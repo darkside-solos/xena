@@ -130,6 +130,19 @@ app.post('/deploy-whatsapp', async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
+// ── /xena-chat endpoint ──────────────────────────────────────────────
+app.post('/xena-chat', async (req, res) => {
+  const { messages, secret } = req.body;
+  if (secret !== SECRET) return res.status(403).json({ error: 'Unauthorized' });
+  if (!messages || !Array.isArray(messages)) return res.json({ error: 'Messages required' });
+  try {
+    const { chat } = require('./features/chatbot');
+    const reply = await chat(messages, 'website@user', false, null);
+    res.json({ reply });
+  } catch (e) {
+    res.json({ error: e.message });
+  }
+});
 
 // ── /status ───────────────────────────────────────────────────────────
 app.get('/status', (req, res) => {
