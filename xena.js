@@ -7,7 +7,7 @@ const {
   downloadMediaMessage,
   makeCacheableSignalKeyStore,
   fetchLatestBaileysVersion,
-} = require('@trashcore/baileys');
+} = require('@whiskeysockets/baileys');
 const { Boom } = require('@hapi/boom');
 const pino = require('pino');
 const fs = require('fs');
