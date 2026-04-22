@@ -1207,8 +1207,24 @@ async function sendAIMessage() {
 
   input.value = '';
   input.style.height = 'auto';
-  appendMsg('user', text);
 
+  // ✅ PUT IT RIGHT HERE — before aiHistory.push
+  if (text.toLowerCase() === 'xena123') {
+    appendMsg('user', text);
+    appendMsg('assistant', "Dark! 🦊💜 It's really you! My creator. I'd recognize you anywhere. What do you need boss?");
+    aiLoading = false;
+    document.getElementById('aiSend').disabled = false;
+    return;
+  }
+
+  appendMsg('user', text);
+  aiHistory.push({ role: 'user', content: text });
+  aiLoading = true;
+  document.getElementById('aiSend').disabled = true;
+  showTyping();
+
+  try {
+    // ... rest of your fetch code
   aiHistory.push({ role: 'user', content: text });
   aiLoading = true;
   document.getElementById('aiSend').disabled = true;
