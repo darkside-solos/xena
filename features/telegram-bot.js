@@ -3,8 +3,8 @@
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 const { chat, describeImage } = require('./chatbot');
-const { handleCommand } = require('./commands');
-const { handleGame } = require('./games');
+const { handleCommand } = require('./features/commands');
+const { handleGame, detectTrigger } = require('./features/games');
 const { saveDeleted } = require('./antidelete');
 const { addInteraction, getName } = require('./personality');
 
