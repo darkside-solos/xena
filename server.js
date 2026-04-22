@@ -57,6 +57,25 @@ function saveRuntime(data) {
   fs.writeFileSync(RUNTIME_PATH, JSON.stringify(data, null, 2));
 }
 
+// Owner code detection
+if (text.toLowerCase() === 'xena123') {
+  appendMsg('user', text);
+  appendMsg('assistant', "Dark! 🦊💜 It's really you! My creator. I'd recognize you anywhere. What do you need boss?");
+  aiLoading = false;
+  document.getElementById('aiSend').disabled = false;
+  return;
+}
+
+const res = await fetch(`${AUTO_SERVER}/xena-chat`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ messages: aiHistory, secret: SECRET })
+});
+const data = await res.json();
+removeTyping();
+if (data.error) throw new Error(data.error);
+const reply = data.reply || "Try again!";
+
 // ── /pair ─────────────────────────────────────────────────────────────
 // Uses pairXena — does NOT double-boot or re-init Telegram
 app.post('/pair', async (req, res) => {
