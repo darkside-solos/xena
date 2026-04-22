@@ -1,4 +1,6 @@
 'use strict';
+const { handleCommand } = require('./features/commands');
+const { handleGame, detectTrigger } = require('./features/games');
 const TelegramBot = require('node-telegram-bot-api');
 
 let bot = null;
