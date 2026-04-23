@@ -38,14 +38,6 @@ function cancelReconnect(){
   if(reconnectState.timer){ clearTimeout(reconnectState.timer); reconnectState.timer=null; reconnectState.isRunning=false; }
 }
 
-// ── Browser rotation ──────────────────────────────────────────────────
-const BROWSERS=[
-  ['Ubuntu','Chrome','20.0.04'],['Windows','Chrome','121.0.0'],
-  ['macOS','Chrome','120.0.0'],['Windows','Edge','121.0.0'],['Ubuntu','Chrome','119.0.0'],
-];
-let browserIndex=0;
-function getNextBrowser(){ const b=BROWSERS[browserIndex%BROWSERS.length]; browserIndex++; return b; }
-
 // ── Helpers ───────────────────────────────────────────────────────────
 const delay=(ms)=>new Promise(r=>setTimeout(r,ms));
 function normalizePhone(p){ return String(p||'').replace(/[^0-9]/g,''); }
@@ -105,52 +97,43 @@ async function startXena(phoneToLink=null){
   sock.ev.on('creds.update',saveCreds);
 
   // ── Pairing ──────────────────────────────────────────────────────
-  if(!isLinked&&phoneToLink){
-    let codeSent=false;
-    const pairingPhone=normalizePhone(phoneToLink);
-    sock.ev.on('connection.update',async(update)=>{
-      const{connection}=update;
-      if(state.creds.registered||codeSent)return;
-      if(connection!=='connecting')return;
-      try{
-        codeSent=true; await delay(4000);
-        const code=await sock.requestPairingCode(pairingPhone);
-        const formatted=(code||'').match(/.{1,4}/g)?.join('-')||code;
-        log(`Code: ${formatted}`);
-        notify(`✅ *Pairing Code:*\n\n\`${formatted}\`\n\n1. Open WhatsApp\n2. Tap ⋮ → *Linked Devices*\n3. Tap *Link with phone number*\n4. Enter: \`${formatted}\`\n\n_Expires in 60 seconds_`);
-      }catch(e){ codeSent=false; notify(`❌ Failed: ${e.message}\nTry /pair again.`); log(`Pair error: ${e.message}`); }
-    });
-  }else if(!isLinked){
-    log('⏳ Waiting for /pair...');
-    notify('👋 *Xena ready!*\n\nSend /pair 2348012345678');
-  }
+async function startXena() {
+  const { state, saveCreds } = await useMultiFileAuthState('./auth_info');
+  isLinked = !!state.creds.registered;
 
-  // ── Connection events ────────────────────────────────────────────
-  sock.ev.on('connection.update',({connection,lastDisconnect})=>{
-    if(connection==='close'){
-      sock._isClosed=true;
-      if(global.activeSession===sock) global.activeSession=null;
-      xenaStatus='🔴 Offline';
-      const code=new Boom(lastDisconnect?.error)?.output?.statusCode;
-      log(`Connection closed. Code: ${code}`);
-      if(code===DisconnectReason.loggedOut){
-        if(fs.existsSync('./auth_info')) fs.rmSync('./auth_info',{recursive:true});
-        isLinked=false; notify('🔴 *Xena logged out.*\n\nSend /pair to reconnect.'); reconnectState.isRunning=false; return;
+  let version;
+  try { const v = await fetchLatestBaileysVersion(); version = v.version; }
+  catch (_) { version = [2, 3000, 1017531287]; }
+
+  const sock = makeWASocket({
+    version,
+    auth: state,
+    logger: pino({ level: 'silent' }),
+    printQRInTerminal: false,
+  });
+
+  sock.ev.on('creds.update', saveCreds);
+
+  // No pairing logic here — handled by server.js /pair endpoint
+
+  sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+    if (connection === 'close') {
+      const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
+      if (shouldReconnect) {
+        setTimeout(() => startXena(), 5000);
+      } else {
+        if (fs.existsSync('./auth_info')) fs.rmSync('./auth_info', { recursive: true });
+        notify('🔴 *Xena logged out.*\n\nVisit the website to reconnect.');
       }
-      if(!isLinked){ log('Not linked. Waiting...'); return; }
-      reconnectState.attempts++;
-      const retryDelay=getReconnectDelay(reconnectState.attempts);
-      if(reconnectState.attempts<=3) notify(`⚠️ *Disconnected*\nReconnecting in ${retryDelay/1000}s...`);
-      cancelReconnect(); reconnectState.isRunning=false;
-      reconnectState.timer=setTimeout(async()=>{ reconnectState.timer=null; try{await startXena();}catch(e){log(`Reconnect error: ${e.message}`);reconnectState.isRunning=false;} },retryDelay);
-    }else if(connection==='open'){
-      sock._isClosed=false; isLinked=true; global.activeSession=sock;
-      reconnectState.attempts=0; reconnectState.isRunning=false; cancelReconnect();
-      xenaStatus=`🟢 Online as ${sock.user?.id?.split(':')[0]}`;
+    } else if (connection === 'open') {
+      isLinked = true;
+      global.activeSession = sock;
       log(`✅ Xena online: ${sock.user?.id}`);
       notify(`✅ *Xena is online!*\n\`${sock.user?.id?.split(':')[0]}\` 🔥`);
-    }else if(connection==='connecting'){ xenaStatus='🟡 Connecting...'; }
+    }
   });
+
+  // messages handler stays same...
 
   // ── Messages ─────────────────────────────────────────────────────
   sock.ev.on('messages.upsert',async({messages,type})=>{
