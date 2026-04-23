@@ -21,6 +21,7 @@ const { addInteraction, getName, checkBirthdays } = require('./features/personal
 const { imageToSticker } = require('./features/sticker');
 const { initTelegram, notify } = require('./telegram');
 const config = require('./config');
+const telegramBot = require('./features/Telegram-bot');
 
 // ── Globals ───────────────────────────────────────────────────────────
 global.xenaLogs = [];
