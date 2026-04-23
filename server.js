@@ -62,17 +62,24 @@ function saveRuntime(data) {
 app.post('/pair', async (req, res) => {
   const { phone, secret } = req.body;
   if (secret !== SECRET) return res.status(403).json({ error: 'Unauthorized' });
-  if (!phone) return res.status(400).json({ error: 'Phone required' });
+  if (!phone) return res.json({ error: 'Phone required' });
   try {
-    const { pairXena } = require('./xena');
-    await pairXena(phone);
-    res.json({ success: true, message: 'Pairing started — check Telegram for code' });
+    const { state, saveCreds } = await require('@whiskeysockets/baileys').useMultiFileAuthState('./auth_info');
+    const { version } = await require('@whiskeysockets/baileys').fetchLatestBaileysVersion();
+    const sock = require('@whiskeysockets/baileys').default({
+      version, auth: state,
+      logger: require('pino')({ level: 'silent' }),
+      printQRInTerminal: false,
+    });
+    sock.ev.on('creds.update', saveCreds);
+    await new Promise(r => setTimeout(r, 3000));
+    const code = await sock.requestPairingCode(phone.replace(/[^0-9]/g, ''));
+    const formatted = (code || '').match(/.{1,4}/g)?.join('-') || code;
+    res.json({ success: true, code: formatted });
   } catch (e) {
-    console.error('❌ /pair error:', e.message);
-    res.status(500).json({ error: e.message });
+    res.json({ error: e.message });
   }
 });
-
 // ── /deploy-telegram ──────────────────────────────────────────────────
 // Called from website when user enters token and taps Deploy
 // Saves token to persistent disk — bot starts immediately, survives redeploys
