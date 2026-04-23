@@ -351,7 +351,7 @@ footer{padding:48px 7%;border-top:1px solid rgba(248,168,200,.08);display:flex;a
 
 <!-- ── AUDIO PLAYER ─────────────────────────────────────────── -->
 <audio id="xenaAudio" loop preload="auto">
-  <source src="features/xena.mp3" type="audio/mpeg">
+  <source src="xena/features/xena.mp3" type="audio/mpeg">
 </audio>
 
 <div id="xena-audio-player">
@@ -652,12 +652,12 @@ footer{padding:48px 7%;border-top:1px solid rgba(248,168,200,.08);display:flex;a
       <div class="creator-avatar-wrap">
         <div class="creator-ring"></div>
         <div class="creator-avatar">
-          <img src="https://i.ibb.co/pBdCNWyF/31d787aded2c.jpg" alt="Darkside">
+          <img src="https://i.ibb.co/HLzpXDKP/03e0b6c4269e.jpg" alt="Darkside">
         </div>
         <div class="creator-online"></div>
       </div>
       <div class="creator-name">Darkside</div>
-      <div class="creator-handle">@darkside_solo</div>
+      <div class="creator-handle">@everyonehatesdark</div>
       <div class="creator-role">CREATOR & DEVELOPER · XENA AI</div>
       <div class="creator-bio">The mind behind Xena. Built from scratch with passion, creativity, and a whole lot of code.</div>
       <a href="https://wa.me/233530729233?text=Hi%20Darkside" class="creator-wa-btn" target="_blank">
@@ -937,8 +937,13 @@ async function sendChat(){
 
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+  method:'POST',
+  headers:{
+    'Content-Type':'application/json',
+    'x-api-key':'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',
+    'anthropic-version':'2023-06-01',
+    'anthropic-dangerous-direct-browser-access':'true'
+  },     
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
