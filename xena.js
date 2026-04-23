@@ -69,32 +69,7 @@ function shouldRespond(msg,botNumber){
 }
 
 // ── Main WhatsApp ─────────────────────────────────────────────────────
-async function startXena(phoneToLink=null){
-  const {state,saveCreds}=await useMultiFileAuthState('./auth_info');
-  isLinked=!!state.creds.registered;
 
-  let version;
-  try{ const v=await fetchLatestBaileysVersion(); version=v.version; }
-  catch(_){ version=[2,3000,1017531287]; }
-
-  const sock=makeWASocket({
-    version,
-    auth:{ creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys,pino({level:'fatal'}).child({level:'fatal'})) },
-    logger:pino({level:'silent'}),
-    printQRInTerminal:false,
-    browser:getNextBrowser(),
-    msgRetryCounterCache,
-    markOnlineOnConnect:false,
-    keepAliveIntervalMs:25_000,
-    connectTimeoutMs:60_000,
-    defaultQueryTimeoutMs:30_000,
-    retryRequestDelayMs:250,
-    emitOwnEvents:false,
-    getMessage:async(_key)=>({conversation:''}),
-  });
-
-  sock._isClosed=false;
-  sock.ev.on('creds.update',saveCreds);
 
   // ── Pairing ──────────────────────────────────────────────────────
 async function startXena() {
