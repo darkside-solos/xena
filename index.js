@@ -3,7 +3,6 @@ const { handleCommand } = require('./features/commands');
 const { handleGame, detectTrigger } = require('./features/games');
 const config = require('./config');
 const fs = require('fs');
-const telegramBot = require('./features/Telegram-bot');
 
 // ── Persistent disk path ──────────────────────────────────────────────
 const DB_PATH = '/opt/render/project/src/database';
