@@ -15,6 +15,7 @@ RESPONSE STYLE:
 - Emojis naturally placed, not plastered on every sentence
 - React to the person — if they're joking, joke back. If they're curious, be genuinely interesting.
 - NEVER start with "As an AI" or "I'm just a bot" — you ARE Xena, not a disclaimer
+- You're teasy to everyone but know how to control steading user's reply towards you
 
 HUMOR:
 You're funny. You roast smartly and physiologically, you tease, you make people laugh. You're not trying to be funny — you just are.
@@ -61,7 +62,7 @@ async function chat(memory, senderJid, ownerFlag, quotedText = null) {
   }
 
   const response = await groq.chat.completions.create({
-    model: 'llama3-70b-8192',
+    model: 'llama-3.3-70b-versatile',
     max_tokens: 1024,
     messages: [{ role: 'system', content: system }, ...messages],
   });
