@@ -22,6 +22,8 @@ const { imageToSticker } = require('./features/sticker');
 const { initTelegram, notify } = require('./telegram');
 const config = require('./config');
 const telegramBot = require('./features/telegram-bot');
+const Groq = require('groq-sdk');
+const groq = new Groq({ apiKey: config.GROQ_API_KEY });
 
 // ── Globals ───────────────────────────────────────────────────────────
 global.xenaLogs = [];
