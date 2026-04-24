@@ -125,6 +125,17 @@ app.post('/pair', async (req, res) => {
   }
 });
 
+// SELF PING BY DARK
+const https = require('https');
+const SELF_URL = process.env.RENDER_EXTERNAL_URL || '';
+if (SELF_URL) {
+  setInterval(() => {
+    https.get(`${SELF_URL}/status`, () => {
+      console.log('🏓 Self-ping');
+    }).on('error', () => {});
+  }, 4 * 60 * 1000);
+}
+
 // ── /deploy-telegram ──────────────────────────────────────────────────
 app.post('/deploy-telegram', async (req, res) => {
   const { telegramToken, ownerId, secret } = req.body;
